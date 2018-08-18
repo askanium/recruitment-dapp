@@ -87,6 +87,13 @@ class CreateJobOfferForm extends React.Component {
     console.log(this.props);
   }
 
+  componentDidMount() {
+    if (this.props.jobOffer) {
+      this.setState({rewardInEther: window.web3.fromWei(this.props.jobOffer.rewardInWei, 'ether')});
+    }
+
+  }
+
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value,
