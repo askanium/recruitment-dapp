@@ -5,6 +5,7 @@ import {
   JOB_OFFER_DETAILS_RECEIVED,
   JOB_OFFER_IPFS_DETAILS_RECEIVED,
   BALANCE_RECEIVED,
+  JOB_OFFER_PUBLISHED,
 } from "../reducers/companies";
 
 export const receiveCompanyDetails = (companyDetails) => {
@@ -61,6 +62,16 @@ export const receiveCompanyBalance = (balance) => {
     dispatch({
       type: BALANCE_RECEIVED,
       balance
+    });
+  }
+};
+
+export const publishJobOfferAction = (companyAddress, jobOfferHash) => {
+  return dispatch => {
+    dispatch({
+      type: JOB_OFFER_PUBLISHED,
+      companyAddress,
+      jobOfferHash
     });
   }
 };

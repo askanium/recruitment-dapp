@@ -48,6 +48,7 @@ function mapStateToProps(state) {
   return {
     ...state.contracts,
     ...state.companies,
+    selectedCompany: state.companies.companies[state.companies.selectedCompany],
     userAddress: state.web3.ethAddress,
     blockNr: state.web3.latestEventBlockNumber,
   };
@@ -84,10 +85,6 @@ class CreateJobOfferForm extends React.Component {
     if (!this.props.selectedCompany || this.props.selectedCompany.owner !== this.props.userAddress) {
       window.location = '/';
     }
-    console.log(this.props);
-  }
-
-  componentDidMount() {
     if (this.props.jobOffer) {
       this.setState({rewardInEther: window.web3.fromWei(this.props.jobOffer.rewardInWei, 'ether')});
     }
@@ -180,7 +177,7 @@ class CreateJobOfferForm extends React.Component {
             id: 'domain',
           }}
         >
-          <MenuItem value="">
+          <MenuItem value="">loadingIPFS
             <em>None</em>
           </MenuItem>
           <MenuItem value={0}>IT</MenuItem>
@@ -296,7 +293,7 @@ class CreateJobOfferForm extends React.Component {
               in={this.state.loadingIPFS || this.state.loadingTransaction}
               style={{
                 transitionDelay: this.state.loadingIPFS || this.state.loadingTransaction ? '800ms' : '0ms',
-                marginTop: '50%',
+                marginTop: '45vh',
                 textAlign: 'center'
               }}
               unmountOnExit

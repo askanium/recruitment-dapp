@@ -7,6 +7,7 @@ export const COMPANY_SELECTED = 'companies/COMPANY_SELECTED';
 export const JOB_OFFER_DETAILS_RECEIVED = 'companies/JOB_OFFER_DETAILS_RECEIVED';
 export const JOB_OFFER_IPFS_DETAILS_RECEIVED = 'companies/JOB_OFFER_IPFS_DETAILS_RECEIVED';
 export const BALANCE_RECEIVED = 'companies/BALANCE_RECEIVED';
+export const JOB_OFFER_PUBLISHED = 'companies/JOB_OFFER_PUBLISHED';
 
 const initialState = {
   nrOfCompanies: 0,
@@ -18,6 +19,7 @@ const initialState = {
 export default (state = initialState, action) => {
   let company;
   let jobOffer;
+  let jobOffers;
 
   switch (action.type) {
     case CONTRACTS_RECEIVED:
@@ -52,13 +54,12 @@ export default (state = initialState, action) => {
 
     case JOB_OFFER_IPFS_DETAILS_RECEIVED:
       jobOffer = Object.assign({}, state.companies[action.companyAddress].jobOffers[action.jobOfferHash], {jobDescription: action.ipfsDetails});
-      const jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers, {[jobOffer.hash]: jobOffer});
-      company = Object.assign({}, state.companies[action.companyAddress], {jobOffers}, {availableBalance: state.selectedCompany.availableBalance});
+      jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers, {[jobOffer.hash]: jobOffer});
+      company = Object.assign({}, state.companies[action.companyAddress], {jobOffers: jobOffers});
 
       return {
         ...state,
         companies: Object.assign({}, state.companies, {[company.address]: company}),
-        selectedCompany: Object.assign({}, company),
       };
 
     case JOB_OFFER_DETAILS_RECEIVED:
@@ -76,25 +77,35 @@ export default (state = initialState, action) => {
         isPublished: action.jobOfferDetails[8],
         approvedApplicant: action.jobOfferDetails[9]
       };
-      const selectedCompany = Object.assign({}, state.selectedCompany);
-      selectedCompany.jobOffers[jobOffer.hash] = jobOffer;
+      jobOffers = Object.assign({}, state.companies[state.selectedCompany].jobOffers, {[jobOffer.hash]: jobOffer});
+      company = Object.assign({}, state.companies[state.selectedCompany], {jobOffers: jobOffers});
 
       return {
         ...state,
-        selectedCompany
+        companies: Object.assign({}, state.companies, {[company.address]: company})
       };
 
     case COMPANY_SELECTED:
       return {
         ...state,
-        selectedCompany: state.companies[action.companyAddress],
+        selectedCompany: action.companyAddress,
         selectedCompanyContractInstance: window.web3.eth.contract(CompanyABI.abi).at(action.companyAddress)
       };
 
     case BALANCE_RECEIVED:
+      company = Object.assign({}, state.companies[state.selectedCompany], {availableBalance: action.balance});
       return {
         ...state,
-        selectedCompany: Object.assign({}, state.selectedCompany, {availableBalance: action.balance})
+        companies: Object.assign({}, state.companies, {[company.address]: company})
+      };
+
+    case JOB_OFFER_PUBLISHED:
+      jobOffer = Object.assign({}, state.companies[action.companyAddress].jobOffers[action.jobOfferHash], {isPublished: true});
+      jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers, {[jobOffer.hash]: jobOffer});
+      company = Object.assign({}, state.companies[action.companyAddress], {jobOffers: jobOffers});
+      return {
+        ...state,
+        companies: Object.assign({}, state.companies, {[company.address]: company})
       };
 
     default:

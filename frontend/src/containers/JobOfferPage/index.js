@@ -10,6 +10,7 @@ import * as companiesActionCreators from "../../actions/companies";
 import * as contractsActionCreators from "../../actions/contracts";
 import CreateJobOfferForm from "../../components/CreateJobOfferForm";
 import ApplicantsList from "../../components/ApplicantsList";
+import JobOffer from "../../components/JobOffer";
 
 const styles = theme => ({
   divider: {
@@ -20,7 +21,7 @@ const styles = theme => ({
 
 function mapStateToProps(state) {
   return {
-    company: state.companies.selectedCompany,
+    company: state.companies.companies[state.companies.selectedCompany],
     companyContract: state.companies.selectedCompanyContractInstance,
     userAddress: state.web3.ethAddress
   };
@@ -67,15 +68,22 @@ class JobOfferPage extends React.Component {
               Job Offer: {this.props.company.jobOffers[this.jobOfferTitleHash].title}
             </Typography>
 
-            <CreateJobOfferForm jobOffer={this.props.company.jobOffers[this.jobOfferTitleHash]}/>
+            {this.props.company.jobOffers[this.jobOfferTitleHash].isPublished
+                ? <div>
+                    <JobOffer jobOffer={this.props.company.jobOffers[this.jobOfferTitleHash]}/>
 
-            <Divider/>
+                    <Divider/>
 
-            <Typography variant="subheading" gutterBottom>
-              Applicants
-            </Typography>
+                    <Typography variant="subheading" gutterBottom>
+                      Applicants
+                    </Typography>
 
-            <ApplicantsList />
+                    <ApplicantsList />
+                </div>
+
+                : <CreateJobOfferForm jobOffer={this.props.company.jobOffers[this.jobOfferTitleHash]}/>
+            }
+
           </Grid>
           <Grid item xs={0} sm={1} md={2} />
         </Grid>

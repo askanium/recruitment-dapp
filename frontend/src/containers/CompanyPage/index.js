@@ -25,10 +25,10 @@ const styles = theme => ({
 
 function mapStateToProps(state) {
   return {
-    company: state.companies.selectedCompany,
+    company: state.companies.companies[state.companies.selectedCompany],
     companyContract: state.companies.selectedCompanyContractInstance,
     userAddress: state.web3.ethAddress,
-    isAdmin: state.companies.selectedCompany ? state.web3.ethAddress === state.companies.selectedCompany.owner : false,
+    isAdmin: state.companies.selectedCompany ? state.web3.ethAddress === state.companies.companies[state.companies.selectedCompany].owner : false,
   };
 }
 
@@ -81,6 +81,7 @@ class CompanyPage extends React.Component {
 
   getJobOfferDetails(address) {
     this.props.companyContract.getJobOffer.call(address, (err, details) => {
+      console.log('address, details', address, details);
       this.props.receiveJobOfferDetails(address, details);
       this.setState({frozenAmount: this.state.frozenAmount + details[4].toNumber()})
     });

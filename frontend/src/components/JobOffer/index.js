@@ -11,6 +11,8 @@ import * as contractsActionCreators from "../../actions/contracts";
 import {push} from "connected-react-router";
 import connect from "react-redux/es/connect/connect";
 import ipfs from "../../ipfs";
+import Fade from "@material-ui/core/Fade";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const domainMapping = {
   0: 'IT',
@@ -31,16 +33,30 @@ const styles = theme => ({
   divider: {
     marginTop: theme.spacing.unit * 2,
     marginBottom: theme.spacing.unit * 2,
+  },
+  loading: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    width: '100%',
+    height: '100vh'
+  },
+  wrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
   }
 });
 
 
 function mapStateToProps(state) {
   return {
-    company: state.companies.selectedCompany,
+    company: state.companies.companies[state.companies.selectedCompany],
     companyContract: state.companies.selectedCompanyContractInstance,
     userAddress: state.web3.ethAddress,
-    isAdmin: state.companies.selectedCompany ? state.web3.ethAddress === state.companies.selectedCompany.owner : false,
+    isAdmin: state.companies.selectedCompany ? state.web3.ethAddress === state.companies.companies[state.companies.selectedCompany].owner : false,
+    blockNr: state.web3.latestEventBlockNumber,
   };
 }
 
@@ -57,7 +73,8 @@ class JobOffer extends React.Component {
 
   state = {
     buffer: '',
-    ipfsHash: null
+    ipfsHash: null,
+    loadingTransaction: false,
   };
 
   constructor(props) {
@@ -81,7 +98,19 @@ class JobOffer extends React.Component {
   }
 
   publishJobOffer(hash) {
+    this.setState({loadingTransaction: true});
     this.props.companyContract.publishJobOffer(hash, {from: this.props.userAddress, gas: 500000}, (err, result) => console.log(err, result));
+
+    // Watch for the CompanyCreated event on the blockchain.
+      const jobOfferPublishEvent = this.props.companyContract.JobOfferPublished(null, {fromBlock: this.props.blockNr, toBlock: 'latest'});
+      jobOfferPublishEvent.watch((error, event) => {
+        if (error) console.log('ERROR!!!', error);
+
+        if (event.args._companyName === this.props.company.name && event.args._jobTitle === this.props.jobOffer.title) {
+          this.setState({loadingTransaction: false});
+          this.props.publishJobOfferAction(this.props.company.address, this.props.jobOffer.hash);
+        }
+      });
   }
 
   applyToJobOffer = async (hash) => {
@@ -198,6 +227,32 @@ class JobOffer extends React.Component {
                 <Button onClick={() => this.applyToJobOffer(jobOffer.hash)} variant={"outlined"} color={"secondary"}>Apply</Button>
                 <Button onClick={() => this.retrieveJobApplication()} variant={"outlined"} color={"secondary"}>Retrieve</Button>
               </div>
+          }
+
+          {/* Loading animation on waiting for Ethereum */}
+          {this.state.loadingTransaction
+            ? <div className={this.props.classes.loading}>
+              <div className={this.props.classes.wrapper}>
+                <Fade
+                  in={this.state.loadingTransaction}
+                  style={{
+                    transitionDelay: this.state.loadingTransaction ? '800ms' : '0ms',
+                    marginTop: '50%',
+                    textAlign: 'center'
+                  }}
+                  unmountOnExit
+                >
+                  <div>
+                    <CircularProgress />
+                    {this.state.loadingTransaction
+                        ? <Typography>Signing and waiting for PublishJobOffer event...</Typography>
+                        : null
+                    }
+                  </div>
+                </Fade>
+              </div>
+            </div>
+            : null
           }
 
         </Grid>
