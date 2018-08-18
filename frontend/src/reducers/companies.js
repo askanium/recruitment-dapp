@@ -1,6 +1,4 @@
 import CompanyABI from "../contracts/Company";
-import Company from "../components/Company";
-import React from "react";
 
 export const CONTRACTS_RECEIVED = 'contracts/CONTRACTS_RECEIVED';
 export const COMPANY_DETAILS_RECEIVED = 'companies/COMPANY_DETAILS_RECEIVED';
