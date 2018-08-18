@@ -62,7 +62,8 @@ class CompanyPage extends React.Component {
     }
 
     this.props.setTitleAction(this.props.company.name);
-
+    this.props.companyContract.balance((err, result) =>
+        this.props.receiveCompanyBalance(result.toNumber()));
   }
 
   getJobOffers() {
@@ -87,6 +88,8 @@ class CompanyPage extends React.Component {
     window.web3.eth.sendTransaction({from: this.props.userAddress, to: this.props.company.address, value: window.web3.toWei(this.state.amount, 'ether'), gas: 100000}, (err, result) => {
       if (err) return;
       this.setState({open: true, amount: 0});
+      this.props.companyContract.balance((err, result) =>
+        this.props.receiveCompanyBalance(result.toNumber()));
     });
   }
 
@@ -108,6 +111,7 @@ class CompanyPage extends React.Component {
         visibleJobOffers.push(jobOffer);
       }
     });
+    console.log(this.props.company);
 
     return (
       <div>
@@ -132,6 +136,19 @@ class CompanyPage extends React.Component {
 
             {this.props.isAdmin
                 ? <div>
+                  <Grid container spacing={24}>
+                    <Grid item xs={6}>
+                      <Typography variant="title" gutterBottom>
+                        Current balance: {window.web3.fromWei(this.props.company.availableBalance, 'ether')} Ether
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography variant="title" gutterBottom>
+                        Frozen balance: {window.web3.fromWei(this.props.company.frozenBalance, 'ether')} Ether
+                      </Typography>
+                    </Grid>
+                  </Grid>
+
                   <Typography variant="subheading" gutterBottom>
                     Deposit Funds
                   </Typography>
@@ -168,7 +185,10 @@ class CompanyPage extends React.Component {
                 <JobOffer key={offer.hash}
                           jobOffer={offer}
                 />)
-                : <Typography>It seems there are no open job offers from {this.props.company.name}. Try later!</Typography>
+                : (this.props.isAdmin
+                    ? null
+                    : <Typography>It seems there are no open job offers from {this.props.company.name}. Try later!</Typography>
+                )
             }
 
             {this.props.isAdmin

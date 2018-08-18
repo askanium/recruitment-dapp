@@ -4,6 +4,7 @@ import {
   COMPANY_SELECTED,
   JOB_OFFER_DETAILS_RECEIVED,
   JOB_OFFER_IPFS_DETAILS_RECEIVED,
+  BALANCE_RECEIVED,
 } from "../reducers/companies";
 
 export const receiveCompanyDetails = (companyDetails) => {
@@ -51,6 +52,15 @@ export const selectCompany = (companyAddress) => {
     dispatch({
       type: COMPANY_SELECTED,
       companyAddress
+    });
+  }
+};
+
+export const receiveCompanyBalance = (balance) => {
+  return dispatch => {
+    dispatch({
+      type: BALANCE_RECEIVED,
+      balance
     });
   }
 };

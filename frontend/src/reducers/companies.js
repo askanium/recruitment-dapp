@@ -6,6 +6,7 @@ export const COMPANY_IPFS_DETAILS_RECEIVED = 'companies/COMPANY_IPFS_DETAILS_REC
 export const COMPANY_SELECTED = 'companies/COMPANY_SELECTED';
 export const JOB_OFFER_DETAILS_RECEIVED = 'companies/JOB_OFFER_DETAILS_RECEIVED';
 export const JOB_OFFER_IPFS_DETAILS_RECEIVED = 'companies/JOB_OFFER_IPFS_DETAILS_RECEIVED';
+export const BALANCE_RECEIVED = 'companies/BALANCE_RECEIVED';
 
 const initialState = {
   nrOfCompanies: 0,
@@ -32,7 +33,9 @@ export default (state = initialState, action) => {
         ipfsHash: action.companyDetails[2],
         numberOfOffers: action.companyDetails[3].toNumber(),
         owner: action.companyDetails[4],
-        jobOffers: {}
+        jobOffers: {},
+        availableBalance: 0,
+        frozenBalance: 0,
       };
       return {
         ...state,
@@ -55,7 +58,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         companies: Object.assign({}, state.companies, {[company.address]: company}),
-        selectedCompany: company,
+        selectedCompany: Object.assign({}, company, state.selectedCompany),
       };
 
     case JOB_OFFER_DETAILS_RECEIVED:
@@ -75,6 +78,7 @@ export default (state = initialState, action) => {
       };
       const selectedCompany = Object.assign({}, state.selectedCompany);
       selectedCompany.jobOffers[jobOffer.hash] = jobOffer;
+      selectedCompany.frozenBalance += jobOffer.rewardInWei;
 
       return {
         ...state,
@@ -86,6 +90,12 @@ export default (state = initialState, action) => {
         ...state,
         selectedCompany: state.companies[action.companyAddress],
         selectedCompanyContractInstance: window.web3.eth.contract(CompanyABI.abi).at(action.companyAddress)
+      };
+
+    case BALANCE_RECEIVED:
+      return {
+        ...state,
+        selectedCompany: Object.assign({}, state.selectedCompany, {availableBalance: action.balance})
       };
 
     default:
