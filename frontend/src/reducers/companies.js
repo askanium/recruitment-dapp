@@ -53,7 +53,7 @@ export default (state = initialState, action) => {
     case JOB_OFFER_IPFS_DETAILS_RECEIVED:
       jobOffer = Object.assign({}, state.companies[action.companyAddress].jobOffers[action.jobOfferHash], {jobDescription: action.ipfsDetails});
       const jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers, {[jobOffer.hash]: jobOffer});
-      company = Object.assign({}, state.companies[action.companyAddress], {jobOffers}, {balance: state.selectedCompany.availableBalance});
+      company = Object.assign({}, state.companies[action.companyAddress], {jobOffers}, {availableBalance: state.selectedCompany.availableBalance});
 
       return {
         ...state,
