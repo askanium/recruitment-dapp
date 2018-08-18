@@ -168,11 +168,11 @@ class JobOffer extends React.Component {
           </Typography>
 
           <Typography variant="subheading" gutterBottom>
-            Salary Range: {`${jobOffer.salaryRangeMin} - ${jobOffer.salaryRangeMax}`}
+            Salary Range: {`$${jobOffer.salaryRangeMin} - ${jobOffer.salaryRangeMax}`}
           </Typography>
 
           <Typography variant="subheading" gutterBottom>
-            Reward in Wei: {jobOffer.rewardInWei}
+            Reward: {window.web3.fromWei(jobOffer.rewardInWei, 'ether')} Ether
           </Typography>
 
           <Typography variant="subheading" gutterBottom>

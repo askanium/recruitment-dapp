@@ -46,6 +46,7 @@ class CompanyPage extends React.Component {
 
   state = {
     amount: 0,
+    frozenAmount: 0,
     open: false
   };
 
@@ -80,7 +81,8 @@ class CompanyPage extends React.Component {
 
   getJobOfferDetails(address) {
     this.props.companyContract.getJobOffer.call(address, (err, details) => {
-      this.props.receiveJobOfferDetails(address, details)
+      this.props.receiveJobOfferDetails(address, details);
+      this.setState({frozenAmount: this.state.frozenAmount + details[4].toNumber()})
     });
   }
 
@@ -144,7 +146,7 @@ class CompanyPage extends React.Component {
                     </Grid>
                     <Grid item xs={6}>
                       <Typography variant="title" gutterBottom>
-                        Frozen balance: {window.web3.fromWei(this.props.company.frozenBalance, 'ether')} Ether
+                        Frozen balance: {window.web3.fromWei(this.state.frozenAmount, 'ether')} Ether
                       </Typography>
                     </Grid>
                   </Grid>

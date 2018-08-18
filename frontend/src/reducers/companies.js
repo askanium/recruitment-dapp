@@ -53,12 +53,12 @@ export default (state = initialState, action) => {
     case JOB_OFFER_IPFS_DETAILS_RECEIVED:
       jobOffer = Object.assign({}, state.companies[action.companyAddress].jobOffers[action.jobOfferHash], {jobDescription: action.ipfsDetails});
       const jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers, {[jobOffer.hash]: jobOffer});
-      company = Object.assign({}, state.companies[action.companyAddress], {jobOffers});
+      company = Object.assign({}, state.companies[action.companyAddress], {jobOffers}, {balance: state.selectedCompany.availableBalance});
 
       return {
         ...state,
         companies: Object.assign({}, state.companies, {[company.address]: company}),
-        selectedCompany: Object.assign({}, company, state.selectedCompany),
+        selectedCompany: Object.assign({}, company),
       };
 
     case JOB_OFFER_DETAILS_RECEIVED:
@@ -78,7 +78,6 @@ export default (state = initialState, action) => {
       };
       const selectedCompany = Object.assign({}, state.selectedCompany);
       selectedCompany.jobOffers[jobOffer.hash] = jobOffer;
-      selectedCompany.frozenBalance += jobOffer.rewardInWei;
 
       return {
         ...state,
