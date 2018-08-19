@@ -8,6 +8,9 @@ export const JOB_OFFER_DETAILS_RECEIVED = 'companies/JOB_OFFER_DETAILS_RECEIVED'
 export const JOB_OFFER_IPFS_DETAILS_RECEIVED = 'companies/JOB_OFFER_IPFS_DETAILS_RECEIVED';
 export const BALANCE_RECEIVED = 'companies/BALANCE_RECEIVED';
 export const JOB_OFFER_PUBLISHED = 'companies/JOB_OFFER_PUBLISHED';
+export const APPLICATION_RECEIVED = 'companies/APPLICATION_RECEIVED';
+export const APPLICANTS_RECEIVED = 'companies/APPLICANTS_RECEIVED';
+export const APPROVE_APPLICANT = 'companies/APPROVE_APPLICANT';
 
 const initialState = {
   nrOfCompanies: 0,
@@ -75,7 +78,8 @@ export default (state = initialState, action) => {
         nrOfApplicants: action.jobOfferDetails[6].toNumber(),
         isOpen: action.jobOfferDetails[7],
         isPublished: action.jobOfferDetails[8],
-        approvedApplicant: action.jobOfferDetails[9]
+        approvedApplicant: action.jobOfferDetails[9],
+        applicants: {}
       };
       jobOffers = Object.assign({}, state.companies[state.selectedCompany].jobOffers, {[jobOffer.hash]: jobOffer});
       company = Object.assign({}, state.companies[state.selectedCompany], {jobOffers: jobOffers});
@@ -101,6 +105,38 @@ export default (state = initialState, action) => {
 
     case JOB_OFFER_PUBLISHED:
       jobOffer = Object.assign({}, state.companies[action.companyAddress].jobOffers[action.jobOfferHash], {isPublished: true});
+      jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers, {[jobOffer.hash]: jobOffer});
+      company = Object.assign({}, state.companies[action.companyAddress], {jobOffers: jobOffers});
+      return {
+        ...state,
+        companies: Object.assign({}, state.companies, {[company.address]: company})
+      };
+
+    case APPLICATION_RECEIVED:
+      jobOffer = Object.assign({}, state.companies[action.companyAddress].jobOffers[action.jobOfferHash], {applicants: {[action.applicant]: action.ipfsHash}});
+      jobOffer.nrOfApplicants += 1;
+      jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers, {[jobOffer.hash]: jobOffer});
+      company = Object.assign({}, state.companies[action.companyAddress], {jobOffers: jobOffers});
+      return {
+        ...state,
+        companies: Object.assign({}, state.companies, {[company.address]: company})
+      };
+
+    case APPLICANTS_RECEIVED:
+      const applicants = {};
+      action.applicants.forEach(applicant => applicants[applicant] = true);
+
+      jobOffer = Object.assign({}, state.companies[action.companyAddress].jobOffers[action.jobOfferHash], {applicants: applicants});
+      jobOffer.nrOfApplicants = Object.keys(jobOffer.applicants).length;
+      jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers, {[jobOffer.hash]: jobOffer});
+      company = Object.assign({}, state.companies[action.companyAddress], {jobOffers: jobOffers});
+      return {
+        ...state,
+        companies: Object.assign({}, state.companies, {[company.address]: company})
+      };
+
+    case APPROVE_APPLICANT:
+      jobOffer = Object.assign({}, state.companies[action.companyAddress].jobOffers[action.jobOfferHash], {approvedApplicant: action.applicant});
       jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers, {[jobOffer.hash]: jobOffer});
       company = Object.assign({}, state.companies[action.companyAddress], {jobOffers: jobOffers});
       return {

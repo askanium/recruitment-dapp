@@ -13,6 +13,7 @@ import connect from "react-redux/es/connect/connect";
 import ipfs from "../../ipfs";
 import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import LoadingSpinner from "../LoadingSpinner";
 
 const domainMapping = {
   0: 'IT',
@@ -75,6 +76,8 @@ class JobOffer extends React.Component {
     buffer: '',
     ipfsHash: null,
     loadingTransaction: false,
+    loadingIPFS: false,
+    eventName: ''
   };
 
   constructor(props) {
@@ -91,6 +94,13 @@ class JobOffer extends React.Component {
 
       this.props.receiveJobOfferIPFSDetails(this.props.company.address, this.props.jobOffer.hash, jobDescription);
     });
+
+    this.props.companyContract.getApplicantsOfJobOffer(this.props.jobOffer.hash, (err, result) => {
+      if (err) return;
+
+      this.props.applicantsListReceivedAction(this.props.company.address, this.props.jobOffer.hash, result)
+    });
+
   };
 
   goToJobOfferPage(address, hash) {
@@ -98,53 +108,60 @@ class JobOffer extends React.Component {
   }
 
   publishJobOffer(hash) {
-    this.setState({loadingTransaction: true});
+    this.setState({loadingTransaction: true, eventName: 'JobOfferPublished'});
     this.props.companyContract.publishJobOffer(hash, {from: this.props.userAddress, gas: 500000}, (err, result) => console.log(err, result));
 
     // Watch for the CompanyCreated event on the blockchain.
-      const jobOfferPublishEvent = this.props.companyContract.JobOfferPublished(null, {fromBlock: this.props.blockNr, toBlock: 'latest'});
-      jobOfferPublishEvent.watch((error, event) => {
-        if (error) console.log('ERROR!!!', error);
+    const jobOfferPublishEvent = this.props.companyContract.JobOfferPublished(null, {fromBlock: this.props.blockNr, toBlock: 'latest'});
+    jobOfferPublishEvent.watch((error, event) => {
+      if (error) console.log('ERROR!!!', error);
 
-        if (event.args._companyName === this.props.company.name && event.args._jobTitle === this.props.jobOffer.title) {
-          this.setState({loadingTransaction: false});
-          this.props.publishJobOfferAction(this.props.company.address, this.props.jobOffer.hash);
-        }
-      });
+      if (event.args._companyName === this.props.company.name && event.args._jobTitle === this.props.jobOffer.title) {
+        this.setState({loadingTransaction: false});
+        this.props.publishJobOfferAction(this.props.company.address, this.props.jobOffer.hash);
+      }
+    });
   }
 
   applyToJobOffer = async (hash) => {
     const self = this;
     if (this.state.buffer) {
+      this.setState({loadingIPFS: true, eventName: 'JobOfferPublished'});
       await ipfs.add(this.state.buffer, (err, ipfsHash) => {
         console.log(err, ipfsHash);
 
         // Set state by setting ipfsHash to ipfsHash[0].hash
-        self.setState({ ipfsHash: ipfsHash[0].hash });
+        self.setState({
+          loadingIPFS: false,
+          loadingTransaction: true,
+          ipfsHash: ipfsHash[0].hash
+        });
 
         // Save the hash onto blockchain
         self.props.companyContract.applyToJobOffer(
             hash,
             self.state.ipfsHash,
             {from: self.props.userAddress, gas: 1000000},
-            (err, result) => console.log('err: ', err, 'result: ', result)
+            (err, result) => {
+              console.log('err: ', err, 'result: ', result)
+            }
         );
+
+        // Watch for the JobOfferReceivedApplication event on the blockchain.
+        const jobOfferReceivedApplicationEvent = self.props.companyContract.JobOfferReceivedApplication({_applicant: self.props.userAddress}, {fromBlock: self.props.blockNr, toBlock: 'latest'});
+        jobOfferReceivedApplicationEvent.watch((error, event) => {
+          if (error) console.log('ERROR!!!', error);
+
+          if (event.args._companyName === self.props.company.name && event.args._jobTitle === self.props.jobOffer.title) {
+            self.setState({loadingTransaction: false});
+            self.props.applyToJobOfferAction(self.props.company.address, self.props.jobOffer.hash, self.props.userAddress, self.state.ipfsHash);
+          }
+        });
+
       });
     } else {
       console.log('No file selected!!!');
     }
-  };
-
-  retrieveJobApplication = async () => {
-    await ipfs.get('QmQ6QCUpV4ytSUSc5SdF818ktRALmNPPL4cRCXwvdZSBhZ', (err, files) => {
-      console.log('got files');
-      console.log(err, files);
-      const blob = new Blob([files[0].content]);
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = 'test-ipfs.pdf';
-      link.click();
-    });
   };
 
   captureFile = (event) => {
@@ -170,8 +187,11 @@ class JobOffer extends React.Component {
     const {
       isAdmin,
       jobOffer,
-      classes
+      classes,
+      userAddress,
     } = this.props;
+
+    const userApplied = !!jobOffer.applicants[userAddress];
 
     return <Paper className={classes.paper}>
       <Grid container spacing={24}>
@@ -223,35 +243,24 @@ class JobOffer extends React.Component {
                 }
               </div>
               : <div>
-                <input type="file" onChange={this.captureFile}/>
-                <Button onClick={() => this.applyToJobOffer(jobOffer.hash)} variant={"outlined"} color={"secondary"}>Apply</Button>
-                <Button onClick={() => this.retrieveJobApplication()} variant={"outlined"} color={"secondary"}>Retrieve</Button>
+                {userApplied
+                    ? <Typography variant={"body1"}>You have already applied to this job offer</Typography>
+                    : <div>
+                      <input type="file" onChange={this.captureFile}/>
+                      <Button onClick={() => this.applyToJobOffer(jobOffer.hash)} variant={"outlined"}
+                              color={"default"}>Apply</Button>
+                    </div>
+                }
               </div>
           }
 
           {/* Loading animation on waiting for Ethereum */}
-          {this.state.loadingTransaction
-            ? <div className={this.props.classes.loading}>
-              <div className={this.props.classes.wrapper}>
-                <Fade
-                  in={this.state.loadingTransaction}
-                  style={{
-                    transitionDelay: this.state.loadingTransaction ? '800ms' : '0ms',
-                    marginTop: '50%',
-                    textAlign: 'center'
-                  }}
-                  unmountOnExit
-                >
-                  <div>
-                    <CircularProgress />
-                    {this.state.loadingTransaction
-                        ? <Typography>Signing and waiting for PublishJobOffer event...</Typography>
-                        : null
-                    }
-                  </div>
-                </Fade>
-              </div>
-            </div>
+          {this.state.loadingTransaction || this.state.loadingIPFS
+            ? <LoadingSpinner
+                  loadingTransaction={this.state.loadingTransaction}
+                  loadingIPFS={this.state.loadingIPFS}
+                  eventName={this.state.eventName}
+              />
             : null
           }
 

@@ -6,6 +6,9 @@ import {
   JOB_OFFER_IPFS_DETAILS_RECEIVED,
   BALANCE_RECEIVED,
   JOB_OFFER_PUBLISHED,
+  APPLICATION_RECEIVED,
+  APPLICANTS_RECEIVED,
+  APPROVE_APPLICANT,
 } from "../reducers/companies";
 
 export const receiveCompanyDetails = (companyDetails) => {
@@ -72,6 +75,40 @@ export const publishJobOfferAction = (companyAddress, jobOfferHash) => {
       type: JOB_OFFER_PUBLISHED,
       companyAddress,
       jobOfferHash
+    });
+  }
+};
+
+export const applyToJobOfferAction = (companyAddress, jobOfferHash, applicant, ipfsHash) => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_RECEIVED,
+      companyAddress,
+      jobOfferHash,
+      applicant,
+      ipfsHash
+    });
+  }
+};
+
+export const applicantsListReceivedAction = (companyAddress, jobOfferHash, applicants) => {
+  return dispatch => {
+    dispatch({
+      type: APPLICANTS_RECEIVED,
+      companyAddress,
+      jobOfferHash,
+      applicants
+    });
+  }
+};
+
+export const approveApplicantAction = (companyAddress, jobOfferHash, applicant) => {
+  return dispatch => {
+    dispatch({
+      type: APPROVE_APPLICANT,
+      companyAddress,
+      jobOfferHash,
+      applicant
     });
   }
 };

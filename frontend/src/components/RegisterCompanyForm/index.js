@@ -187,7 +187,7 @@ class RegisterCompanyForm extends React.Component {
               in={this.state.loadingIPFS || this.state.loadingTransaction}
               style={{
                 transitionDelay: this.state.loadingIPFS || this.state.loadingTransaction ? '800ms' : '0ms',
-                marginTop: '50%',
+                marginTop: '45vh',
                 textAlign: 'center'
               }}
               unmountOnExit

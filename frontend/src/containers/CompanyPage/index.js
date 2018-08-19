@@ -91,8 +91,11 @@ class CompanyPage extends React.Component {
     window.web3.eth.sendTransaction({from: this.props.userAddress, to: this.props.company.address, value: window.web3.toWei(this.state.amount, 'ether'), gas: 100000}, (err, result) => {
       if (err) return;
       this.setState({open: true, amount: 0});
-      this.props.companyContract.balance((err, result) =>
-        this.props.receiveCompanyBalance(result.toNumber()));
+      setTimeout(() => {
+        this.props.companyContract.balance((err, result) =>
+          this.props.receiveCompanyBalance(result.toNumber()));
+
+      }, 10000);
     });
   }
 
@@ -209,7 +212,7 @@ class CompanyPage extends React.Component {
               ContentProps={{
                 'aria-describedby': 'message-id',
               }}
-              message={<span id="message-id">Amount deposited!</span>}
+              message={<span id="message-id">Amount deposited! It should update soon on the page.</span>}
             />
           </Grid>
           <Grid item xs={0} sm={1} md={2} />

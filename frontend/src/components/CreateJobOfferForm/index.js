@@ -177,7 +177,7 @@ class CreateJobOfferForm extends React.Component {
             id: 'domain',
           }}
         >
-          <MenuItem value="">loadingIPFS
+          <MenuItem value="">
             <em>None</em>
           </MenuItem>
           <MenuItem value={0}>IT</MenuItem>
