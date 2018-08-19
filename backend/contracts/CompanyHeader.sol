@@ -5,7 +5,7 @@ import './SafeMath.sol';
 
 contract CompanyHeader {
 
-    using SafeMath for uint128;
+    using SafeMath for uint;
 
     event JobOfferCreated(string _companyName, string _jobTitle);
     event JobOfferUpdated(string _companyName, string _jobTitle);
