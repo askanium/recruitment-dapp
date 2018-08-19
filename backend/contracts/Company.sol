@@ -3,7 +3,9 @@ pragma solidity ^0.4.24;
 import './UpdatableProxyImplementation.sol';
 import './CompanyData.sol';
 
-
+/// @title Company
+/// @dev The Company has an owner address that can create, update and publish
+/// Job Offers as well as approve candidates for a specific Job Offer.
 contract Company is UpdatableProxyImplementation, CompanyData {
 
     /// @dev Modifier to check functions are called only by contract owners.
@@ -368,7 +370,7 @@ contract Company is UpdatableProxyImplementation, CompanyData {
 
     /// @dev Fallback function to be able to receive payments.
     function ()
-        public
+        external
         payable
     {
         require(msg.data.length == 0);
