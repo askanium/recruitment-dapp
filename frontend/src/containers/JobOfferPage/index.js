@@ -72,13 +72,13 @@ class JobOfferPage extends React.Component {
                 ? <div>
                     <JobOffer jobOffer={this.props.company.jobOffers[this.jobOfferTitleHash]}/>
 
-                    <Divider/>
+                    <Divider className={this.props.classes.divider}/>
 
                     <Typography variant="subheading" gutterBottom>
                       Applicants
                     </Typography>
 
-                    <ApplicantsList />
+                    <ApplicantsList applicants={this.props.company.jobOffers[this.jobOfferTitleHash].applicants} jobOffer={this.props.company.jobOffers[this.jobOfferTitleHash]}/>
                 </div>
 
                 : <CreateJobOfferForm jobOffer={this.props.company.jobOffers[this.jobOfferTitleHash]}/>
