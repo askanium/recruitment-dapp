@@ -347,6 +347,25 @@ contract Company is UpdatableProxyImplementation, CompanyData {
         return jobOffer.applicantsList;
     }
 
+    /// @dev A getter of IPFS hash of the applicant to a specific job offer.
+    ///
+    /// @param _titleHash The bytes32 representation of the job offer title.
+    /// @param _applicant The address of the applicant that applied to the job offer.
+    ///
+    /// @return The IPFS hash of the applicant that applied to the job offer.
+    function getApplicantIPFSHash(bytes32 _titleHash, address _applicant)
+        external
+        view
+        returns(string)
+    {
+        JobOffer storage jobOffer = openedJobOffers[_titleHash];
+
+        // Proceed further only if there is such an applicant that applied.
+        require(bytes(jobOffer.applicants[_applicant]).length > 0);
+
+        return jobOffer.applicants[_applicant];
+    }
+
     /// @dev Fallback function to be able to receive payments.
     function ()
         public
