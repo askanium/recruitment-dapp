@@ -6,6 +6,7 @@ import './CompanyHeader.sol';
 
 contract CompanyDataInternal is UpdatableProxyData, CompanyHeader {
 
+    bool internal isEmergency;
     uint internal balance;
     uint internal rewardsToBePaid;
     string internal name;

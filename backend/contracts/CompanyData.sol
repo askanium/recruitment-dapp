@@ -6,8 +6,9 @@ import './CompanyHeader.sol';
 
 contract CompanyData is UpdatableProxyData, CompanyHeader {
 
+    bool public isEmergency;
     uint public balance;
-    uint internal rewardsToBePaid;
+    uint public rewardsToBePaid;
     string public name;
     string public ipfsHash;
     bytes32[] public openedJobOffersList;

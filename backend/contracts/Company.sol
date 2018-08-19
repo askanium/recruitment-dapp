@@ -12,6 +12,12 @@ contract Company is UpdatableProxyImplementation, CompanyData {
         _;
     }
 
+    /// @dev Circuit breaker modifier.
+    modifier coveredByEmergencyStop() {
+        require(!isEmergency);
+        _;
+    }
+
     /// @dev Getter function to return owner.
     ///
     /// @return The owner of the contract.
@@ -21,6 +27,11 @@ contract Company is UpdatableProxyImplementation, CompanyData {
         returns(address)
     {
         return owner;
+    }
+
+    /// @dev Enable emergency mode.
+    function switchEmergency(bool _state) external onlyOwner {
+        isEmergency = _state;
     }
 
     /// @dev Getter function to obtain company details.
@@ -57,6 +68,7 @@ contract Company is UpdatableProxyImplementation, CompanyData {
     )
         public
         onlyOwner
+        coveredByEmergencyStop
         returns(bool)
     {
         // If contract does not have sufficient
@@ -103,6 +115,7 @@ contract Company is UpdatableProxyImplementation, CompanyData {
     )
         external
         onlyOwner
+        coveredByEmergencyStop
         returns(bool)
     {
         JobOffer storage jobOffer = openedJobOffers[_titleHash];
@@ -158,6 +171,7 @@ contract Company is UpdatableProxyImplementation, CompanyData {
     function publishJobOffer(bytes32 _titleHash)
         external
         onlyOwner
+        coveredByEmergencyStop
         returns (bool)
     {
         JobOffer storage jobOffer = openedJobOffers[_titleHash];
@@ -182,6 +196,7 @@ contract Company is UpdatableProxyImplementation, CompanyData {
         string _ipfsCVHash
     )
         external
+        coveredByEmergencyStop
         returns(bool)
     {
         JobOffer storage jobOffer = openedJobOffers[_titleHash];
@@ -194,6 +209,7 @@ contract Company is UpdatableProxyImplementation, CompanyData {
         // absent, meaning that its length should be zero.
         require(bytes(jobOffer.applicants[msg.sender]).length == 0);
 
+        jobOffer.applicantsList.push(msg.sender);
         jobOffer.applicants[msg.sender] = _ipfsCVHash;
 
         emit JobOfferReceivedApplication(name, jobOffer.title, msg.sender);
@@ -213,6 +229,7 @@ contract Company is UpdatableProxyImplementation, CompanyData {
     )
         external
         onlyOwner
+        coveredByEmergencyStop
         returns(bool)
     {
         JobOffer storage jobOffer = openedJobOffers[_titleHash];
@@ -245,6 +262,7 @@ contract Company is UpdatableProxyImplementation, CompanyData {
     )
         public
         onlyOwner
+        coveredByEmergencyStop
     {
         JobOffer storage jobOffer = openedJobOffers[_titleHash];
 
