@@ -242,7 +242,7 @@ contract Company is UpdatableProxyImplementation, CompanyData {
         // We need to assure that the applicant applied to this JobOffer.
         // In order to do this, we check that the applicant's IPFS value
         // should be present, meaning that its length should be greater than zero.
-        require(bytes(jobOffer.applicants[msg.sender]).length != 0);
+        require(bytes(jobOffer.applicants[_applicant]).length != 0);
 
         jobOffer.approvedApplicant = _applicant;
 
