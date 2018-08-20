@@ -66,4 +66,29 @@ contract("Company", accounts => {
     await tryCatch(deployedCompany.publishJobOffer(web3.sha3("WebDev"), {from: firstAccount, gas: 1000000}), errTypes.revert);
   });
 
+  it("successfully processes an applicant", async () => {
+    const cf = await CompanyFactory.deployed();
+    const deployedCompanyHash = await cf.companies(0);
+    const deployedCompany = Company.at(deployedCompanyHash);
+
+    await deployedCompany.applyToJobOffer(web3.sha3("WebDev"), "IPFS_HASH", {from: secondAccount, gas: 1000000});
+
+    const applicants = await deployedCompany.getApplicantsOfJobOffer(web3.sha3("WebDev"));
+
+    assert.equal(applicants.length, 1);
+    assert.equal(applicants[0], secondAccount);
+  });
+
+  it("successfully approves an applicant", async () => {
+    const cf = await CompanyFactory.deployed();
+    const deployedCompanyHash = await cf.companies(0);
+    const deployedCompany = Company.at(deployedCompanyHash);
+
+    await deployedCompany.approveCandidateForJobOffer(web3.sha3("WebDev"), secondAccount, {from: firstAccount, gas: 1000000});
+
+    const jobOfferDetails = await deployedCompany.getJobOffer(web3.sha3("WebDev"));
+
+    assert.equal(jobOfferDetails[jobOfferDetails.length - 1], secondAccount);
+  });
+
 });
