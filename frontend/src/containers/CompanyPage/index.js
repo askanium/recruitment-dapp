@@ -68,20 +68,24 @@ class CompanyPage extends React.Component {
   }
 
   getJobOffers() {
-    for (let i = 0; i < +this.props.company.numberOfOffers; i++) {
-      this.getJobOfferAddress(i);
+    for (let i = 0; i < +this.props.company.numberOfOpenedOffers; i++) {
+      this.getJobOfferAddress(i, true);
+    }
+    for (let i = 0; i < +this.props.company.numberOfClosedOffers; i++) {
+      this.getJobOfferAddress(i, false);
     }
   }
 
-  getJobOfferAddress(index) {
-    this.props.companyContract.openedJobOffersList.call(index, (err, address) => {
+  getJobOfferAddress(index, isOpened) {
+    const method = isOpened ? 'openedJobOffersList' : 'closedJobOffersList';
+    this.props.companyContract[method].call(index, (err, address) => {
+      console.log('JOBOFFER', address);
       this.getJobOfferDetails(address);
     });
   }
 
   getJobOfferDetails(address) {
     this.props.companyContract.getJobOffer.call(address, (err, details) => {
-      console.log('address, details', address, details);
       this.props.receiveJobOfferDetails(address, details);
       this.setState({frozenAmount: this.state.frozenAmount + details[4].toNumber()})
     });
@@ -117,7 +121,6 @@ class CompanyPage extends React.Component {
         visibleJobOffers.push(jobOffer);
       }
     });
-    console.log(this.props.company);
 
     return (
       <div>
