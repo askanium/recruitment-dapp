@@ -44,10 +44,11 @@ contract Company is UpdatableProxyImplementation, CompanyData {
     function getCompanyDetails()
         view
         external
-        returns (address, string, string, uint, address)
+        returns (address, string, string, uint, uint, address)
     {
-        uint numberOfOffers = openedJobOffersList.length;
-        return (address(this), name, ipfsHash, numberOfOffers, owner);
+        uint numberOfOpenedOffers = openedJobOffersList.length;
+        uint numberOfClosedOffers = closedJobOffersList.length;
+        return (address(this), name, ipfsHash, numberOfOpenedOffers, numberOfClosedOffers, owner);
     }
 
     /// @dev Creates a JobOffer struct and adds it to the open offers list and mapping.
@@ -315,7 +316,7 @@ contract Company is UpdatableProxyImplementation, CompanyData {
     )
         external
     {
-        JobOffer storage jobOffer = openedJobOffers[_titleHash];
+        JobOffer storage jobOffer = closedJobOffers[_titleHash];
 
         // Only approved applicants can withdraw.
         require(jobOffer.approvedApplicant == msg.sender);
