@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import {bindActionCreators} from "redux";
 import { withStyles } from '@material-ui/core/styles';
 import * as actionCreators from "../../actions/contracts";
+import * as companiesActionCreators from "../../actions/companies";
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
@@ -57,6 +58,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
       ...actionCreators,
+      ...companiesActionCreators,
       goToCompanyPage: (address) => push(`/company/${address}`),
     }, dispatch);
 }
@@ -123,6 +125,7 @@ class CreateJobOfferForm extends React.Component {
 
         if (event.args._jobTitle === this.state.title && event.args._companyName === this.props.selectedCompany.name) {
           this.setState({loadingTransaction: false});
+          this.props.createJobOfferAction();
           this.props.goToCompanyPage(this.props.selectedCompany.address);
         }
       })
