@@ -9,6 +9,8 @@ import {
   APPLICATION_RECEIVED,
   APPLICANTS_RECEIVED,
   APPROVE_APPLICANT,
+  CLOSE_JOB_OFFER,
+  JOB_OFFER_CREATED,
 } from "../reducers/companies";
 
 export const receiveCompanyDetails = (companyDetails) => {
@@ -109,6 +111,25 @@ export const approveApplicantAction = (companyAddress, jobOfferHash, applicant) 
       companyAddress,
       jobOfferHash,
       applicant
+    });
+  }
+};
+
+export const closeJobOfferAction = (companyAddress, jobOfferHash) => {
+  return dispatch => {
+    dispatch({
+      type: CLOSE_JOB_OFFER,
+      companyAddress,
+      jobOfferHash
+    });
+  }
+};
+
+export const createJobOfferAction = (companyAddress) => {
+  return dispatch => {
+    dispatch({
+      type: JOB_OFFER_CREATED,
+      companyAddress,
     });
   }
 };

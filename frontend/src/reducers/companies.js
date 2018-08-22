@@ -11,6 +11,8 @@ export const JOB_OFFER_PUBLISHED = 'companies/JOB_OFFER_PUBLISHED';
 export const APPLICATION_RECEIVED = 'companies/APPLICATION_RECEIVED';
 export const APPLICANTS_RECEIVED = 'companies/APPLICANTS_RECEIVED';
 export const APPROVE_APPLICANT = 'companies/APPROVE_APPLICANT';
+export const CLOSE_JOB_OFFER = 'companies/CLOSE_JOB_OFFER';
+export const JOB_OFFER_CREATED = 'companies/JOB_OFFER_CREATED';
 
 const initialState = {
   nrOfCompanies: 0,
@@ -36,8 +38,9 @@ export default (state = initialState, action) => {
         address: action.companyDetails[0],
         name: action.companyDetails[1],
         ipfsHash: action.companyDetails[2],
-        numberOfOffers: action.companyDetails[3].toNumber(),
-        owner: action.companyDetails[4],
+        numberOfOpenedOffers: action.companyDetails[3].toNumber(),
+        numberOfClosedOffers: action.companyDetails[4].toNumber(),
+        owner: action.companyDetails[5],
         jobOffers: {},
         availableBalance: 0,
         frozenBalance: 0,
@@ -139,6 +142,23 @@ export default (state = initialState, action) => {
       jobOffer = Object.assign({}, state.companies[action.companyAddress].jobOffers[action.jobOfferHash], {approvedApplicant: action.applicant});
       jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers, {[jobOffer.hash]: jobOffer});
       company = Object.assign({}, state.companies[action.companyAddress], {jobOffers: jobOffers});
+      return {
+        ...state,
+        companies: Object.assign({}, state.companies, {[company.address]: company})
+      };
+
+    case CLOSE_JOB_OFFER:
+      jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers);
+      delete jobOffers[action.jobOfferHash];
+      company = Object.assign({}, state.companies[action.companyAddress], {jobOffers: jobOffers});
+      return {
+        ...state,
+        companies: Object.assign({}, state.companies, {[company.address]: company})
+      };
+
+    case JOB_OFFER_CREATED:
+      company = Object.assign({}, state.companies[action.companyAddress]);
+      company.nrOfOpenedOffers += 1;
       return {
         ...state,
         companies: Object.assign({}, state.companies, {[company.address]: company})
