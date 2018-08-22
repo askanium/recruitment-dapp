@@ -69,16 +69,12 @@ class CompanyList extends React.Component {
   getCompanyDetails(address) {
     const deployedCompany = window.web3.eth.contract(CompanyContract.abi).at(address);
     deployedCompany.getCompanyDetails.call(async (err, details) => {
-      console.log(address);
-      console.log(err, details);
       this.props.receiveCompanyDetails(details);
-      console.log(details);
       await ipfs.get(details[2], (err, result) => {
         if (err) { console.log(err); return; }
 
         const str = new TextDecoder('utf-8').decode(result[0].content);
         const companyJson = JSON.parse(str);
-        console.log(companyJson);
 
         this.props.receiveCompanyIPFSDetails(details[0], companyJson);
       })
@@ -108,7 +104,7 @@ class CompanyList extends React.Component {
             <Company key={this.props.companies[key].address}
                      name={this.props.companies[key].name}
                      ipfsHash={this.props.companies[key].ipfsHash}
-                     numberOfOffers={this.props.companies[key].numberOfOffers}
+                     numberOfOffers={this.props.companies[key].numberOfOpenedOffers + this.props.companies[key].numberOfClosedOffers}
                      owner={this.props.companies[key].owner}
                      description={this.props.companies[key].description}
                      link={this.props.companies[key].link}
