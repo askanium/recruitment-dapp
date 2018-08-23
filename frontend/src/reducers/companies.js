@@ -158,7 +158,7 @@ export default (state = initialState, action) => {
 
     case JOB_OFFER_CREATED:
       company = Object.assign({}, state.companies[action.companyAddress]);
-      company.nrOfOpenedOffers += 1;
+      company.numberOfOpenedOffers += 1;
       return {
         ...state,
         companies: Object.assign({}, state.companies, {[company.address]: company})
