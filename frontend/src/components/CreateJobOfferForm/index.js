@@ -125,7 +125,7 @@ class CreateJobOfferForm extends React.Component {
 
         if (event.args._jobTitle === this.state.title && event.args._companyName === this.props.selectedCompany.name) {
           this.setState({loadingTransaction: false});
-          this.props.createJobOfferAction();
+          this.props.createJobOfferAction(this.props.selectedCompany.address);
           this.props.goToCompanyPage(this.props.selectedCompany.address);
         }
       })
