@@ -142,13 +142,16 @@ class CreateJobOfferForm extends React.Component {
       (err, result) => console.log('err: ', err, 'result: ', result)
     );
 
-    // TODO listen to event here!
-    // Watch for the JobOfferCreated event on the blockchain.
-    // const jobOfferCreateEvent = this.props.selectedCompanyContractInstance.JobOfferUpdated({name: this.props.selectedCompany.name, _title: this.state.title});
-    // jobOfferCreateEvent.watch((error, event) => {
-    //   if (!error) console.log('RECEIVED EVENT!!!', event);
-    //   else console.log('ERROR!!!', error);
-    // })
+    // Watch for the JobOfferUpdated event on the blockchain.
+    const jobOfferUpdateEvent = this.props.selectedCompanyContractInstance.JobOfferUpdated({_companyName: this.props.selectedCompany.name, _jobTitle: this.state.title}, {fromBlock: this.props.blockNr, toBlock: 'latest'});
+    jobOfferUpdateEvent.watch((error, event) => {
+      if (error) console.log('ERROR!!!', error);
+
+      if (event.args._jobTitle === this.state.title && event.args._companyName === this.props.selectedCompany.name) {
+        this.setState({loadingTransaction: false});
+        this.props.goToCompanyPage(this.props.selectedCompany.address);
+      }
+    });
 
   }
 
