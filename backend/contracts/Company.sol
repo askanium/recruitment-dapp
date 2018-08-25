@@ -339,6 +339,8 @@ contract Company is UpdatableProxyImplementation, CompanyData {
         uint remainingReward = jobOffer.rewardInWei - amountToExtract;
         jobOffer.rewardInWei = remainingReward;
 
+        // Wrap the `send()` method in `require()` so that it will
+        // fail loudly in case the send operation won't succeed.
         require(msg.sender.send(_amount));
     }
 
