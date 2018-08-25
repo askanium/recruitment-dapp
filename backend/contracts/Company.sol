@@ -277,8 +277,6 @@ contract Company is UpdatableProxyImplementation, CompanyData {
         closedJobOffers[_titleHash] = jobOffer;
         closedJobOffersList.push(_titleHash);
 
-        delete openedJobOffers[_titleHash];
-
         // In order to remove the job offer from openedJobOffersList, we first
         // need to find the index at which it is located in the array.
         // As earlier we did a require(jobOffer.isOpen), we are sure it
@@ -303,7 +301,18 @@ contract Company is UpdatableProxyImplementation, CompanyData {
             rewardsToBePaid -= jobOffer.rewardInWei;
         }
 
-        emit JobOfferClosed(name, jobOffer.title);
+        // Delete the job offer from the opened list.
+        // Note that after the following statement, jobOffer
+        // will be reset to 0 and any references to it will
+        // be treated as though jobOffer wasn't initialized.
+        delete openedJobOffers[_titleHash];
+
+        // We reference the newly added to closedJobOffers job offer,
+        // as according to the previous expression, jobOffer is
+        // not available anymore.
+        // The delete statement could be moved last, but it's left there
+        // for the demonstration purpose.
+        emit JobOfferClosed(name, closedJobOffers[_titleHash].title);
     }
 
     /// @dev Used by approved applicants to withdraw their reward from a job offer.
