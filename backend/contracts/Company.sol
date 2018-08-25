@@ -247,11 +247,11 @@ contract Company is UpdatableProxyImplementation, CompanyData {
 
         jobOffer.approvedApplicant = _applicant;
 
+        emit JobOfferCovered(name, jobOffer.title, _applicant);
+
         // Close the job offer, but keep the balance frozen,
         // so that the approved applicant can withdraw it.
         closeJobOffer(_titleHash, true);
-
-        emit JobOfferCovered(name, jobOffer.title, _applicant);
     }
 
     /// @dev Closes a give job offer and can either free associated reward or keep it frozen.
