@@ -92,7 +92,7 @@ class CompanyPage extends React.Component {
   }
 
   depositFunds() {
-    window.web3.eth.sendTransaction({from: this.props.userAddress, to: this.props.company.address, value: window.web3.toWei(this.state.amount, 'ether'), gas: 100000}, (err, result) => {
+    this.props.companyContract.deposit({from: this.props.userAddress, to: this.props.company.address, value: window.web3.toWei(this.state.amount, 'ether'), gas: 100000}, (err, result) => {
       if (err) return;
       this.setState({open: true, amount: 0});
       setTimeout(() => {
