@@ -380,12 +380,27 @@ contract Company is UpdatableProxyImplementation, CompanyData {
         return jobOffer.applicants[_applicant];
     }
 
-    /// @dev Fallback function to be able to receive payments.
+    /// @dev Function to deposit ether onto the contract balance.
+    /// @return Whether deposit succeeded or failed.
+    function deposit()
+        external
+        payable
+        coveredByEmergencyStop
+        returns(bool)
+    {
+        balance += msg.value;
+
+        return true;
+    }
+
+    /// @dev Fallback function.
+    /// @notice Check for msg.data length to be 0 so that calls
+    /// that do not fit any other function signature AND will carry
+    /// some data will be reverted.
     function ()
         external
         payable
     {
         require(msg.data.length == 0);
-        balance += msg.value;
     }
 }
