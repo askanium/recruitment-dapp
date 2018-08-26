@@ -148,8 +148,8 @@ export default (state = initialState, action) => {
       };
 
     case CLOSE_JOB_OFFER:
-      jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers);
-      delete jobOffers[action.jobOfferHash];
+      jobOffer = Object.assign({}, state.companies[action.companyAddress].jobOffers[action.jobOfferHash], {isOpen: false});
+      jobOffers = Object.assign({}, state.companies[action.companyAddress].jobOffers, {[jobOffer.hash]: jobOffer});
       company = Object.assign({}, state.companies[action.companyAddress], {jobOffers: jobOffers});
       return {
         ...state,
