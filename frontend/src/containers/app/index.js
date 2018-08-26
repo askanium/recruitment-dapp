@@ -121,6 +121,9 @@ class App extends React.Component {
             <Typography variant="title" color="inherit" className={this.props.classes.flex}>
               {this.props.menuTitle}
             </Typography>
+            <Typography variant="body2" color="inherit" className={this.props.classes.flex}>
+              Current account: {this.props.web3.ethAddress}
+            </Typography>
             <Button color="inherit" onClick={() => this.props.registerPage()}>Register Company</Button>
             <Button color="inherit" onClick={() => this.props.home()}>Home</Button>
           </Toolbar>
