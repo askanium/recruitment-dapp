@@ -22,13 +22,6 @@ contract TestCompany {
         Assert.equal(company.getOwner(), 0x0, 'For a newly generated Company without CompanyFactory, the owner should be 0x0');
     }
 
-    function testSettingAnOwnerOfDeployedContractThroughFactory() public {
-        CompanyFactory cf = CompanyFactory(DeployedAddresses.CompanyFactory());
-
-        Company deployedCompany = cf.createCompany("A", "B");
-        Assert.equal(deployedCompany.getOwner(), address(this), 'An owner is different than a deployer');
-    }
-
     function testGettingCompanyDetails() public {
         CompanyFactory cf = CompanyFactory(DeployedAddresses.CompanyFactory());
 
@@ -47,20 +40,6 @@ contract TestCompany {
         Assert.equal(_nrOfClosedOffers, uint(0), "Created company should not have any closed offers upon creation");
         Assert.equal(_owner, address(this), "Created company should not have any offers upon creation");
     }
-
-//    function testCreateJobOffer() public {
-//        CompanyFactory cf = CompanyFactory(DeployedAddresses.CompanyFactory());
-//
-//        Company deployedCompany = cf.createCompany("A", "B");
-//        require(address(deployedCompany).call.value(2 ether).gas(1000000)());
-//
-//        (,,, uint _nrOfOpenedOffers,,) = deployedCompany.getCompanyDetails();
-//        Assert.equal(_nrOfOpenedOffers, uint(0), "Created company should not have any offers upon creation");
-//        deployedCompany.createJobOffer(1000, 2000, 1000000000, CompanyHeader.Domains.IT, "Web Dev", "JD");
-//
-//        (,,, uint _newNrOfOpenedOffers,,) = deployedCompany.getCompanyDetails();
-//        Assert.equal(_newNrOfOpenedOffers, uint(1), "Created offer should increase Nr of offers available");
-//    }
 
     function () public {}
 }
