@@ -72,7 +72,7 @@ frontend projects.
 If you don't have `ganache-cli` installed, check out the
 installation guide [here](https://github.com/trufflesuite/ganache-cli)
 or simply execute in a terminal `sudo npm install -g ganache-cli`
-You should get a similar result (but with different addresses):
+You should get a similar result (but with different addresses): <br/>
 ![ganache-cli initialized](assets/images/1.png)
 3. Open another terminal window
 4. cd into the /backend folder of the project (`cd /{path-to-project-folder}/backend)
@@ -83,7 +83,7 @@ in a terminal window
 6. Run `truffle test`. All tests should pass
 7. Run `truffle migrate`. It will migrate the required
 contracts from the `migrations` folder onto the dev chain.
-The output of migrating should be similar to this image:
+The output of migrating should be similar to this image: <br/>
 ![Migrated contract addresses](assets/images/2.png)
 
 We are all set with the backend. Now let's proceed with the
@@ -99,18 +99,18 @@ In order to be able to use the project, you'll need MetaMask extension
 installed.
 
 1. Copy the `mnemonic` from the terminal window where you have
-launched `ganache-cli`
+launched `ganache-cli` <br/>
 ![ganache-cli mnemonic](assets/images/MM1.png)
-2. In MetaMask (MM), connect to the `Localhost 8545` network
+2. In MetaMask (MM), connect to the `Localhost 8545` network <br/>
 ![MM network selector](assets/images/MM2.png)
-3. Press "Restore from seed phrase"
+3. Press "Restore from seed phrase" <br/>
 ![Restore from seed link](assets/images/MM3.png)
-4. Paste in the mnemonic phrase and set a password
+4. Paste in the mnemonic phrase and set a password <br/>
 ![Create account](assets/images/MM4.png)
 5. Copy a Private Key from the terminal window where you have
 launched `ganache-cli` <br/>
 ![ganache-cli private keys](assets/images/MM5.png)
-6. In MM, select Import Account and paste the private key
+6. In MM, select Import Account and paste the private key <br/>
 ![Import private key](assets/images/MM6.png)
 7. (Optional) import yet another private key to have 3 accounts in total
 
@@ -122,7 +122,7 @@ We are done with setting up the MM. Now let's move on to the frontend project it
 2. cd into the /frontend folder of the project (`cd /{path-to-project-folder}/frontend)
 3. Run `npm install`
 4. Open the `src/constants.js` file and set the `DEPLOYED_COMPANY_FACTORY_ADDRESS`
-variable to be equal to the address at which CompanyFactory was deployed:
+variable to be equal to the address at which CompanyFactory was deployed: <br/>
 ![CompanyFactory address](assets/images/3.png)
 5. Run `npm run start`
 6. Open your browser and navigate to `localhost:3000`
@@ -242,7 +242,7 @@ emitting an event after it runs. You can find these changes in the
 
 The process of upgrading a contract consists of several steps:
 
-1. Get the address of the deployed base Company contract
+1. Get the address of the deployed base Company contract <br/>
 ![Deployed base Contract address](assets/images/Upgrade1.png)
 2. In the backend folder, move the `3_update_contracts.js` file into
 the `migrations` folder
@@ -250,7 +250,7 @@ the `migrations` folder
 `migrations/3_update_contracts.js` with the address of the deployed
 company you got at point 1
 4. Run `truffle migrate` to deploy the new contracts
-5. Copy the `Company2Update` contract address
+5. Copy the `Company2Update` contract address <br/>
 ![Deployed Company2Update address](assets/images/Upgrade2.png)
 6. Assign that address to the `DEPLOYED_COMPANY_UPDATER_ADDRESS`
 variable in the `src/constants.js` file
