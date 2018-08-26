@@ -100,36 +100,51 @@ class CreateJobOfferForm extends React.Component {
   };
 
   createJobOffer = async () => {
-    this.setState({loadingIPFS: true});
-    await ipfs.add(new Buffer(JSON.stringify({data: this.state.jobDescription})), (err, ipfsHash) => {
-      if (err) return;
+    let valid = this.state.salaryRangeMin
+        && this.state.salaryRangeMax
+        && this.state.rewardInEther
+        && this.state.title
+        && this.state.jobDescription
+        && this.state.domain !== ""
+        && this.state.salaryRangeMin > 0
+        && this.state.salaryRangeMax > 0
+        && this.state.salaryRangeMax > this.state.salaryRangeMin
+        && this.state.rewardInEther <= this.props.selectedCompany.availableBalance;
+    if (valid) {
+      this.setState({loadingIPFS: true});
+      await ipfs.add(new Buffer(JSON.stringify({data: this.state.jobDescription})), (err, ipfsHash) => {
+        if (err) return;
 
-      this.setState({loadingIPFS: false});
-      this.setState({loadingTransaction: true});
+        this.setState({loadingIPFS: false});
+        this.setState({loadingTransaction: true});
 
-      this.props.selectedCompanyContractInstance.createJobOffer(
-        this.state.salaryRangeMin,
-        this.state.salaryRangeMax,
-        +window.web3.toWei(this.state.rewardInEther),
-        this.state.domain,
-        this.state.title,
-        ipfsHash[0].hash,
-        {from: this.props.userAddress, gas: 1500000},
-        (err, result) => console.log('err: ', err, 'result: ', result)
-      );
+        this.props.selectedCompanyContractInstance.createJobOffer(
+            this.state.salaryRangeMin,
+            this.state.salaryRangeMax,
+            +window.web3.toWei(this.state.rewardInEther),
+            this.state.domain,
+            this.state.title,
+            ipfsHash[0].hash,
+            {from: this.props.userAddress, gas: 1500000},
+            (err, result) => console.log('err: ', err, 'result: ', result)
+        );
 
-      // Watch for the JobOfferCreated event on the blockchain.
-      const jobOfferCreateEvent = this.props.selectedCompanyContractInstance.JobOfferCreated({_companyName: this.props.selectedCompany.name, _jobTitle: this.state.title}, {fromBlock: this.props.blockNr, toBlock: 'latest'});
-      jobOfferCreateEvent.watch((error, event) => {
-        if (error) console.log('ERROR!!!', error);
+        // Watch for the JobOfferCreated event on the blockchain.
+        const jobOfferCreateEvent = this.props.selectedCompanyContractInstance.JobOfferCreated({
+          _companyName: this.props.selectedCompany.name,
+          _jobTitle: this.state.title
+        }, {fromBlock: this.props.blockNr, toBlock: 'latest'});
+        jobOfferCreateEvent.watch((error, event) => {
+          if (error) console.log('ERROR!!!', error);
 
-        if (event.args._jobTitle === this.state.title && event.args._companyName === this.props.selectedCompany.name) {
-          this.setState({loadingTransaction: false});
-          this.props.createJobOfferAction(this.props.selectedCompany.address);
-          this.props.goToCompanyPage(this.props.selectedCompany.address);
-        }
-      })
-    });
+          if (event.args._jobTitle === this.state.title && event.args._companyName === this.props.selectedCompany.name) {
+            this.setState({loadingTransaction: false});
+            this.props.createJobOfferAction(this.props.selectedCompany.address);
+            this.props.goToCompanyPage(this.props.selectedCompany.address);
+          }
+        })
+      });
+    }
   };
 
   updateJobOffer() {
@@ -205,8 +220,11 @@ class CreateJobOfferForm extends React.Component {
             InputLabelProps={{
               shrink: true,
             }}
+            inputProps={{
+              min: 0
+            }}
             placeholder="Ex: 1000"
-            helperText="Number of people that work at the given company"
+            helperText="Min monthly salary"
             fullWidth
             margin="normal"
           />
@@ -223,8 +241,11 @@ class CreateJobOfferForm extends React.Component {
             InputLabelProps={{
               shrink: true,
             }}
-            placeholder="Ex: 1000"
-            helperText="Number of people that work at the given company"
+            inputProps={{
+              min: 0
+            }}
+            placeholder="Ex: 2000"
+            helperText="Max monthly salary"
             fullWidth
             margin="normal"
           />
