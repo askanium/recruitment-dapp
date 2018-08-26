@@ -304,3 +304,11 @@ see it in the nav bar.
 As there are no standalone contracts in the Recruitment Dapp, I have
 written a "King of the Ether" example contract in Vyper that you can
 find under `backend/contracts/VyperDemo.vy`
+
+
+## Conclusion
+
+This was an awesome journey and a great learning experience!
+
+If you did spot some bugs or discrepancies in the code/description,
+please let me know!
