@@ -129,7 +129,7 @@ class JobOffer extends React.Component {
   applyToJobOffer = async (hash) => {
     const self = this;
     if (this.state.buffer) {
-      this.setState({loadingIPFS: true, eventName: 'JobOfferPublished'});
+      this.setState({loadingIPFS: true, eventName: 'JobOfferReceivedApplication'});
       await ipfs.add(this.state.buffer, (err, ipfsHash) => {
 
         // Set state by setting ipfsHash to ipfsHash[0].hash
