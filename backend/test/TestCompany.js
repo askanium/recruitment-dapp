@@ -50,7 +50,7 @@ contract("Company", accounts => {
     const deployedCompanyHash = await cf.companies(0);
     const deployedCompany = Company.at(deployedCompanyHash);
 
-    await deployedCompany.send(web3.toWei(1));
+    await deployedCompany.deposit({from: firstAccount, value: web3.toWei(1), gas: 100000});
 
     await deployedCompany.createJobOffer(1, 2, 100, 0, "WebDev", "JD", {from: firstAccount, gas: 1000000});
     await deployedCompany.publishJobOffer(web3.sha3("WebDev"));

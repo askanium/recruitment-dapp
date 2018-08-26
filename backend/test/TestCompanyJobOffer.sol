@@ -13,14 +13,14 @@ contract TestCompanyJobOffer {
         CompanyFactory cf = CompanyFactory(DeployedAddresses.CompanyFactory());
 
         Company deployedCompany = cf.createCompany("A", "B");
-        require(address(deployedCompany).call.value(2 ether).gas(1000000)());
+        deployedCompany.deposit.value(2 ether)();
 
-        (,,, uint _nrOfOffers,) = deployedCompany.getCompanyDetails();
-        Assert.equal(_nrOfOffers, uint(0), "Created company should not have any offers upon creation");
+        (,,, uint _nrOfOpenedOffers,,) = deployedCompany.getCompanyDetails();
+        Assert.equal(_nrOfOpenedOffers, uint(0), "Created company should not have any offers upon creation");
         deployedCompany.createJobOffer(1000, 2000, 1000000000, CompanyHeader.Domains.IT, "Web Dev", "JD");
 
-        (,,, uint _newNrOfOffers,) = deployedCompany.getCompanyDetails();
-        Assert.equal(_newNrOfOffers, uint(1), "Created offer should increase Nr of offers available");
+        (,,, uint _newNrOfOpenedOffers,,) = deployedCompany.getCompanyDetails();
+        Assert.equal(_newNrOfOpenedOffers, uint(1), "Created offer should increase Nr of offers available");
     }
 
     function testGetJobOfferFromOpenedOffers() public {
