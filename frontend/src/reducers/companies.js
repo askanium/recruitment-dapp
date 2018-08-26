@@ -1,4 +1,5 @@
 import CompanyABI from "../contracts/Company";
+import Company2ABI from "../contracts/Company2";
 
 export const CONTRACTS_RECEIVED = 'contracts/CONTRACTS_RECEIVED';
 export const COMPANY_DETAILS_RECEIVED = 'companies/COMPANY_DETAILS_RECEIVED';
@@ -96,7 +97,8 @@ export default (state = initialState, action) => {
       return {
         ...state,
         selectedCompany: action.companyAddress,
-        selectedCompanyContractInstance: window.web3.eth.contract(CompanyABI.abi).at(action.companyAddress)
+        selectedCompanyContractInstance: window.web3.eth.contract(CompanyABI.abi).at(action.companyAddress),
+        selectedCompany2ContractInstance: window.web3.eth.contract(Company2ABI.abi).at(action.companyAddress)
       };
 
     case BALANCE_RECEIVED:

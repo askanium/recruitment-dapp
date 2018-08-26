@@ -1,13 +1,16 @@
 import {WEB3_INITIALIZED} from "./web3";
 import CompanyFactory from "../contracts/CompanyFactory";
+import CompanyUpdater from "../contracts/CompanyUpdater";
+import {DEPLOYED_COMPANY_FACTORY_ADDRESS, DEPLOYED_COMPANY_UPDATER_ADDRESS} from "../constants";
 
 export const CONTRACTS_REQUESTED = 'contracts/CONTRACTS_REQUESTED';
 export const CONTRACTS_RECEIVED = 'contracts/CONTRACTS_RECEIVED';
 
 const initialState = {
-  deployedFactoryAddress: '0xeac51ce3155c8bed3ebcf33dd62b3ad27d36da05',
+  deployedFactoryAddress: DEPLOYED_COMPANY_FACTORY_ADDRESS,
+  deployedUpdaterAddress: DEPLOYED_COMPANY_UPDATER_ADDRESS,
   deployedFactoryInstance: null,
-  deployedFactoryLogSubscription: null,
+  deployedUpdaterInstance: null,
   isQueryingNode: false
 };
 
@@ -27,23 +30,12 @@ export default (state = initialState, action) => {
 
     case WEB3_INITIALIZED:
       const contract = window.web3.eth.contract(CompanyFactory.abi);
+      const updater = window.web3.eth.contract(CompanyUpdater.abi);
 
       return {
         ...state,
         deployedFactoryInstance: contract.at(state.deployedFactoryAddress),
-        // deployedFactoryLogSubscription: window.web3.eth.subscribe('logs', {
-        //   address: state.deployedFactoryAddress,
-        //   topics: [null, null]
-        // }, (error, result) => {
-        //   if (!error) console.log('triggered callback. received result:', result);
-        // })
-        // .on('data', (log) => console.log('triggered "data" event. received: ', log))
-        // .on('changed', (log) => {
-        //   console.log(`Changed: ${log}`)
-        // })
-        // .on('error', (log) => {
-        //   console.log(`error:  ${log}`)
-        // })
+        deployedUpdaterInstance: updater.at(state.deployedUpdaterAddress),
       };
 
     default:
