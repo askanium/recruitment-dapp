@@ -18,10 +18,10 @@ frontend projects, respectively.
 ### Backend
 
 As you can see in the `contracts/` folder, there are lots
-of contract in it. However, only two contracts (along with a library)
+of contracts in it. However, only two contracts (along with a library)
 out of those in the contracts directory are getting deployed.
 The rest are part of the inheritance chain of the two deployed
-contracts that allow for upgrading a contract. We'll get to that
+contracts that allow upgrading a contract easier. We'll get to that
 at the end of this file. The deployed entities are:
 
 1. The CompanyFactory.sol contract, for generating
@@ -44,7 +44,7 @@ On the frontend side the tech stack is:
 
 - React (main framework)
 - Redux (frontend state management)
-- Web3 (injected by MM, for contract management)
+- Web3 (injected by MetaMask, for contract management)
 - IPFS API (for storing files and info about company)
 - Material UI (for making things pretty)
 
@@ -68,14 +68,14 @@ frontend projects.
 ### Running backend project
 
 1. Open a terminal
-2. Run `ganache-cli` in order to run a local ethereum node
+2. Run `ganache-cli` in order to run a local ethereum node.
 If you don't have `ganache-cli` installed, check out the
 installation guide [here](https://github.com/trufflesuite/ganache-cli)
 or simply execute in a terminal `sudo npm install -g ganache-cli`
 You should get a similar result (but with different addresses): <br/>
 ![ganache-cli initialized](assets/images/1.png)
 3. Open another terminal window
-4. cd into the /backend folder of the project (`cd /{path-to-project-folder}/backend)
+4. cd into the /backend folder of the project (`cd /{path-to-project-folder}/backend`)
 5. Run `truffle compile`. The project should compile and
 create the `build` folder with .json files in it. If you
 don't have truffle installed yet, run `sudo npm install -g truffle`
@@ -120,7 +120,9 @@ We are done with setting up the MM. Now let's move on to the frontend project it
 
 1. Open a terminal window
 2. cd into the /frontend folder of the project (`cd /{path-to-project-folder}/frontend)
-3. Run `npm install`
+3. Run `npm install` (although this is weird, sometimes it doesn't install everything
+that is needed in one run, so if you keep getting an error upon running the project,
+please run `npm install` again)
 4. Open the `src/constants.js` file and set the `DEPLOYED_COMPANY_FACTORY_ADDRESS`
 variable to be equal to the address at which CompanyFactory was deployed: <br/>
 ![CompanyFactory address](assets/images/3.png)
@@ -212,6 +214,9 @@ extension of the file as by default it is downloaded in pdf.
 
 As a candidate, you can apply to as many opened job offers as you wish.
 
+Depending on the size of the file you are uploading, it may take a while,
+as the call to IPFS is made through an Infura node.
+
 ### Managing Applicants
 
 Switch back to the owner account of a company and navigate to the job offer
@@ -228,6 +233,9 @@ to `isOpen = false` and the selected applicant will be set as the
 `approvedApplicant` for the job offer. Now, the person who owns the address
 of the `approvedApplicant` can claim the reward that is associated to that
 job offer.
+
+After claiming the reward, give it some time for the transaction to be mined
+and the check your balance - it should have an additional amount of ether!
 
 ![Claiming the reward](assets/images/Applicant3.png)
 
@@ -249,11 +257,13 @@ the `migrations` folder
 3. Substitute `{insert deployed Company address here}` in
 `migrations/3_update_contracts.js` with the address of the deployed
 company you got at point 1
-4. Run `truffle migrate` to deploy the new contracts
+4. While being in `backend/` folder, run `truffle migrate` to deploy
+the new contracts
 5. Copy the `Company2Update` contract address <br/>
 ![Deployed Company2Update address](assets/images/Upgrade2.png)
 6. Assign that address to the `DEPLOYED_COMPANY_UPDATER_ADDRESS`
-variable in the `src/constants.js` file
+variable in the `frontend/src/constants.js` file (note the `frontend`
+folder!)
 
 Now, navigate to a company page and append `/2` in the URL of the page.
 
@@ -264,6 +274,10 @@ to update the contracts. You can know that by the presence of three
 additional buttons: "Migrate Data", "Update Proxy" and "Greet".
 
 ![Updated Company Page](assets/images/Upgrade4.png)
+
+Before doing anything else, please change your account in MetaMask
+to the one with which you have created the company (otherwise you
+won't be able to upgrade contracts).
 
 If you will try to press on "Greet" before migrating, you will get
 a "JSON RPC error" in the console, because the function we try to
