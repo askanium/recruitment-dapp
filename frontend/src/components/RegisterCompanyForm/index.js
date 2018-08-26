@@ -77,31 +77,39 @@ class RegisterCompanyForm extends React.Component {
   };
 
   createCompany = async () => {
-    this.setState({loadingIPFS: true});
-    await ipfs.add(new Buffer(JSON.stringify(this.state)), (err, ipfsHash) => {
-      console.log(err, ipfsHash);
-      if (err) return;
+    let valid = this.state.name
+        && this.state.size
+        && this.state.link
+        && this.state.description
+        && this.state.logo
+        && this.state.size > 0;
+    if (valid) {
+      this.setState({loadingIPFS: true});
+      await ipfs.add(new Buffer(JSON.stringify(this.state)), (err, ipfsHash) => {
+        console.log(err, ipfsHash);
+        if (err) return;
 
-      this.setState({loadingIPFS: false});
-      this.setState({loadingTransaction: true});
+        this.setState({loadingIPFS: false});
+        this.setState({loadingTransaction: true});
 
-      this.props.deployedFactoryInstance.createCompany(
-        this.state.name,
-        ipfsHash[0].hash,
-        {from: this.props.userAddress, gas: 1500000},
-        (err, result) => console.log('error', err, 'result', result));
+        this.props.deployedFactoryInstance.createCompany(
+          this.state.name,
+          ipfsHash[0].hash,
+          {from: this.props.userAddress, gas: 1500000},
+          (err, result) => console.log('error', err, 'result', result));
 
-      // Watch for the CompanyCreated event on the blockchain.
-      const companyCreateEvent = this.props.deployedFactoryInstance.CompanyCreated({_name: this.state.name}, {fromBlock: this.props.blockNr, toBlock: 'latest'});
-      companyCreateEvent.watch((error, event) => {
-        if (error) console.log('ERROR!!!', error);
+        // Watch for the CompanyCreated event on the blockchain.
+        const companyCreateEvent = this.props.deployedFactoryInstance.CompanyCreated({_name: this.state.name}, {fromBlock: this.props.blockNr, toBlock: 'latest'});
+        companyCreateEvent.watch((error, event) => {
+          if (error) console.log('ERROR!!!', error);
 
-        if (event.args._name === this.state.name) {
-          this.setState({loadingTransaction: false});
-          this.props.goToCompaniesListPage();
-        }
+          if (event.args._name === this.state.name) {
+            this.setState({loadingTransaction: false});
+            this.props.goToCompaniesListPage();
+          }
+        });
       });
-    });
+    }
   };
 
   render() {
@@ -129,6 +137,9 @@ class RegisterCompanyForm extends React.Component {
         onChange={this.handleChange('size')}
         InputLabelProps={{
           shrink: true,
+        }}
+        inputProps={{
+          min: 0
         }}
         placeholder="Ex: 1000"
         helperText="Number of people that work at the given company"
@@ -171,7 +182,7 @@ class RegisterCompanyForm extends React.Component {
         InputLabelProps={{
           shrink: true,
         }}
-        placeholder="Ex: www.google.com/logo"
+        placeholder="Ex: www.google.com/logo.png"
         fullWidth
         margin="normal"
       />
