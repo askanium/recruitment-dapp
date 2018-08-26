@@ -1,0 +1,2 @@
+CompanyFactory: 0xa35e4e81e16e63bb515ad71d8b20ed73c3d8bf99
+Company (internal, used as a master copy by CompanyFactory): 0x0f04f151ebb419ea59ee9e2056ca9b786aa90bf6
