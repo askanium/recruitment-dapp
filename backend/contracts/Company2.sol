@@ -25,7 +25,7 @@ contract Company2 is Company, Company2Data {
     function switchEmergency(bool _state) external onlyOwner {
         isEmergency = _state;
 
-//        emit EmergencyStatusUpdate(_state);
+        emit EmergencyStatusUpdate(_state);
     }
 
 }
