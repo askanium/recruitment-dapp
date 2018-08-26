@@ -4,6 +4,10 @@ import './UpdatableProxyData.sol';
 import './CompanyHeader.sol';
 
 
+/// @title CompanyDataInternal
+/// @dev The CompanyDataInternal holds definition of all data variables
+/// of the proxying contract. All variables have `internal` visibility
+/// so as to not appear on the proxying contract.
 contract CompanyDataInternal is UpdatableProxyData, CompanyHeader {
 
     bool internal isEmergency;

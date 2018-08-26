@@ -13,17 +13,18 @@ contract Proxy is ProxyData {
         proxied = _proxied;
     }
 
-    /// @dev EIP 897 methods
+    /// @dev EIP 897 method
     function implementation() public view returns (address) {
         return proxied;
     }
 
+    /// @dev EIP 897 method
     function proxyType() public pure returns (uint256) {
         return 1; // for "forwarding proxy"
                   // see EIP 897 for more details
     }
 
-    /// Proxies the call to the implementation contract
+    /// @dev Proxies the call to the implementation contract
     function () public payable {
         bool success = proxied.delegatecall(msg.data);
         assembly {

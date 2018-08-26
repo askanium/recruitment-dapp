@@ -4,10 +4,12 @@ import './Company.sol';
 import './Company2Data.sol';
 
 
+/// @title Company2
+/// @dev The Company2 is an upgrade of the Company contract that is used
+/// to demonstrate the implemented contract upgradable pattern.
 contract Company2 is Company, Company2Data {
 
-    /// @dev Function to set the newly added `greeting` contract
-    /// variable.
+    /// @dev Function to set the newly added `greeting` contract variable.
     /// @notice This demonstrates how we can add new functionality
     /// to the upgradeable contract.
     function changeGreeting(string _greeting)

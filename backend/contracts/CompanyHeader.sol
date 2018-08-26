@@ -3,6 +3,8 @@ pragma solidity ^0.4.24;
 import './SafeMath.sol';
 
 
+/// @title CompanyHeader
+/// @dev The CompanyHeader holds everything except contract functions and variables.
 contract CompanyHeader {
 
     using SafeMath for uint;

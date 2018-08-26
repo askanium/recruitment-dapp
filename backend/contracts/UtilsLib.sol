@@ -1,6 +1,8 @@
 pragma solidity ^0.4.24;
 
 
+/// @title UtilsLib
+/// @dev Library that defines a method to compute string length.
 library UtilsLib {
 
     /// @dev Taken and adjusted from https://ethereum.stackexchange.com/a/13886/41771

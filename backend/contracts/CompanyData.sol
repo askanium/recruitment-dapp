@@ -4,6 +4,8 @@ import './UpdatableProxyData.sol';
 import './CompanyHeader.sol';
 
 
+/// @title CompanyData
+/// @dev The CompanyData holds definition of all data variables.
 contract CompanyData is UpdatableProxyData, CompanyHeader {
 
     bool public isEmergency;
