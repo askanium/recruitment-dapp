@@ -1,4 +1,4 @@
-# Recruitment Dapp
+# Recruitment Dapp (final project for Consensys Academy 2018)
 
 The Recruitment Dapp is a decentralized application that
 allows companies post their job offers along a specific
